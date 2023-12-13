@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
@@ -21,8 +21,6 @@ import { RootState } from '../redux/store';
 import { ColumnContainer } from './dnd/ColumnContainer';
 import { SingleRow } from './dnd/SingleRow';
 
-// glowny blad z consoli: 97
-// console.js:213 Warning: Cannot update a component (`TroloBoard`) while rendering a different component (`TroloBoard`). To locate the bad setState() call inside `TroloBoard`, follow the stack trace as described in
 export const TroloBoard = () => {
   const dispatch = useDispatch();
 
@@ -30,20 +28,15 @@ export const TroloBoard = () => {
   const rows = useSelector((state: RootState) => state.rows);
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 10 } }));
 
-  const [columnsItems, setColumnsItems] = useState<ColumnsSlice[]>(columns);
-  const [rowsItems, setRowsItems] = useState<RowsSlice[]>(rows);
-
   const [activeColumn, setActiveColumn] = useState<ColumnsSlice | null>(null);
   const [activeRow, setActiveRow] = useState<RowsSlice | null>(null);
 
-  useEffect(() => {
-    setColumnsItems(columns);
-    setRowsItems(rows);
-  }, [columns, rows]);
-
   const columnsId = useMemo(() => columns.map((column) => column.id), [columns]);
-
+  const numberOverRowIndex = 1;
   const onDragStart = (event: DragStartEvent) => {
+    setActiveColumn(null);
+    setActiveRow(null);
+
     if (event.active.data.current?.type === 'Column') {
       setActiveColumn(event.active.data.current.column);
       return;
@@ -66,12 +59,15 @@ export const TroloBoard = () => {
 
     if (activeId === overId) return;
 
-    setColumnsItems((columnsItems) => {
-      const activeColumnIndex = columnsItems.findIndex((column) => column.id === activeId);
-      const overColumnIndex = columnsItems.findIndex((column) => column.id === overId);
-      dispatch(updateColumnState(arrayMove(columnsItems, activeColumnIndex, overColumnIndex)));
-      return arrayMove(columnsItems, activeColumnIndex, overColumnIndex);
-    });
+    const getNewColumns = (columns: ColumnsSlice[]) => {
+      const activeColumnIndex = columns.findIndex((column) => column.id === activeId);
+      const overColumnIndex = columns.findIndex((column) => column.id === overId);
+
+      return arrayMove(columns, activeColumnIndex, overColumnIndex);
+    };
+
+    const newColumnsItems = getNewColumns(columns);
+    dispatch(updateColumnState(newColumnsItems));
   };
 
   const onDragOver = (event: DragOverEvent) => {
@@ -89,24 +85,55 @@ export const TroloBoard = () => {
     if (!isActiveRow) return;
 
     if (isActiveRow && isOverRow) {
-      setRowsItems((rowsItems) => {
-        const activeRowIndex = rowsItems.findIndex((row) => row.id === activeId);
-        const overRowIndex = rowsItems.findIndex((row) => row.id === overId);
-        console.log('srednio dziala, do sprawdzenia');
-        //poprawic zapis
-        return dispatch(updateRowState(arrayMove(rowsItems, activeRowIndex, overRowIndex)));
-      });
+      const getNewRows = (rows: RowsSlice[]) => {
+        const activeIndex = rows.findIndex((row) => row.id === activeId);
+        const overIndex = rows.findIndex((row) => row.id === overId);
+        const rowWithActiveIndex = rows[activeIndex];
+        const rowWithOverIndex = rows[overIndex];
+
+        if (rowWithActiveIndex.columnId != rowWithOverIndex.columnId) {
+          const newArray = rows.map((row) => {
+            if (row.id === rowWithActiveIndex.id) {
+              return { ...row, columnId: rowWithOverIndex.columnId };
+            } else {
+              return row;
+            }
+          });
+
+          return arrayMove(newArray, activeIndex, overIndex - numberOverRowIndex);
+        } else {
+          return arrayMove(rows, activeIndex, overIndex);
+        }
+      };
+
+      const newRowsItems = getNewRows(rows);
+
+      dispatch(updateRowState(newRowsItems));
     }
 
     const isOverColumn = over.data.current?.type === 'Column';
 
     if (isActiveRow && isOverColumn) {
-      console.log('nie dziala');
+      const getNewRowsOverColumns = (rows: RowsSlice[]) => {
+        const activeIndex = rows.findIndex((row) => row.id === activeId);
+        const activeRow = rows[activeIndex];
+
+        const newArray = rows.map((row) => {
+          if (row.id === activeRow.id) {
+            return { ...row, columnId: overId };
+          } else {
+            return row;
+          }
+        });
+
+        return arrayMove(newArray, activeIndex, activeIndex);
+      };
+      const newRowsItems = getNewRowsOverColumns(rows);
+      dispatch(updateRowState(newRowsItems));
     }
   };
-
   return (
-    <div style={{ alignItems: 'center', display: 'flex', height: '90vh', margin: 'auto' }}>
+    <div style={{ display: 'flex', height: '90vh', margin: 'auto' }}>
       <DndContext
         sensors={sensors}
         onDragEnd={onDragEnd}
@@ -116,11 +143,11 @@ export const TroloBoard = () => {
         <div style={{ alignItems: 'start', display: 'flex', gap: '5px' }}>
           <div style={{ display: 'flex', gap: '5px' }}>
             <SortableContext items={columnsId}>
-              {columnsItems.map((column: ColumnsSlice) => (
+              {columns.map((column: ColumnsSlice) => (
                 <ColumnContainer
                   key={column.id}
                   column={column}
-                  rows={rowsItems.filter((row) => row.columnId === column.id)}
+                  rows={rows.filter((row) => row.columnId === column.id)}
                 />
               ))}
             </SortableContext>
@@ -137,7 +164,7 @@ export const TroloBoard = () => {
             {activeColumn && (
               <ColumnContainer
                 column={activeColumn}
-                rows={rowsItems.filter((row) => row.columnId === activeColumn.id)}
+                rows={rows.filter((row) => row.columnId === activeColumn.id)}
               />
             )}
             {activeRow && <SingleRow row={activeRow} />}

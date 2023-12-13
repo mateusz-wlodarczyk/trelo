@@ -1,8 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const magicNumber_0 = 0;
-const magicNumber_1 = 1;
-const magicNumber_10 = 0;
+const idPayload = 0;
+const contentPaylod = 1;
+const startIdColumns = 1;
+
 export interface ColumnsSlice {
   id: number | string;
   title: string;
@@ -22,7 +23,8 @@ export const columnsSlice = createSlice({
   name: 'columns',
   reducers: {
     createNewColumn: (state, action) => {
-      return [...state, { id: state.length + magicNumber_10, title: action.payload }];
+      //wrzucic limit na liczbe kolumn (teoria)
+      return [...state, { id: state.length + startIdColumns, title: action.payload }];
     },
     removeOneColumn: (state, action) => {
       const newArray = state.filter((column) => column.id !== action.payload);
@@ -33,12 +35,13 @@ export const columnsSlice = createSlice({
     },
     updateTitleColumn: (state, action) => {
       const newArray = state.map((column) => {
-        if (column.id !== action.payload[magicNumber_0]) {
-          return column;
+        if (column.id === action.payload[idPayload]) {
+          return { ...column, title: action.payload[contentPaylod] };
         } else {
-          return { ...column, title: action.payload[magicNumber_1] };
+          return column;
         }
       });
+
       return newArray;
     },
 

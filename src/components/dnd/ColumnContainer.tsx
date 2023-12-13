@@ -8,6 +8,10 @@ import { createNewRow, removeRowsInRemovedColumn, RowsSlice } from '../../redux/
 
 import { SingleRow } from './SingleRow';
 export const ColumnContainer = ({ column, rows }: { column: ColumnsSlice; rows: RowsSlice[] }) => {
+  const idIndexInTextInput = 0;
+  const valueIndexinTextInput = 1;
+  type ArrayInput = string | number;
+  const [textInput, setTextInput] = useState<ArrayInput[]>([idIndexInTextInput, column.title]);
   const dispatch = useDispatch();
   const [editTitleMode, setEditTitleMode] = useState(false);
   const { attributes, isDragging, listeners, setNodeRef, transform, transition } = useSortable({
@@ -31,7 +35,7 @@ export const ColumnContainer = ({ column, rows }: { column: ColumnsSlice; rows: 
           opacity: '60%',
           transform: CSS.Transform.toString(transform),
           transition,
-          width: '150px',
+          width: '200px',
         }}
       />
     );
@@ -47,10 +51,10 @@ export const ColumnContainer = ({ column, rows }: { column: ColumnsSlice; rows: 
         height: '500px',
         transform: CSS.Transform.toString(transform),
         transition,
-        width: '150px',
+        width: '200px',
       }}
     >
-      {/*  eslint-disable-line */}
+      {/*  eslint-disable-next-line */}
       <div
         {...attributes}
         {...listeners}
@@ -60,8 +64,9 @@ export const ColumnContainer = ({ column, rows }: { column: ColumnsSlice; rows: 
           color: 'white',
           cursor: 'grab',
           display: 'flex',
-          height: '60px',
+          height: '50px',
           justifyContent: 'space-between',
+          width: '200px',
         }}
         onClick={() => {
           setEditTitleMode(true);
@@ -70,13 +75,20 @@ export const ColumnContainer = ({ column, rows }: { column: ColumnsSlice; rows: 
         <div style={{ display: 'flex', gap: '4px' }}>
           {!editTitleMode && column.title}
           {editTitleMode && (
-            <input
-              value={column.title}
+            <textarea
+              value={textInput[valueIndexinTextInput]}
+              //poprawic onBlur
               onBlur={() => setEditTitleMode((show) => !show)}
-              onChange={(e) => dispatch(updateTitleColumn([column.id, e.target.value]))}
+              onChange={(e) => {
+                setTextInput([column.id, e.target.value]);
+              }}
               onKeyDown={(e) => {
-                if (e.key !== 'Enter') return;
-                setEditTitleMode(false);
+                if (e.key === 'Enter') {
+                  setEditTitleMode((show) => !show);
+                  dispatch(updateTitleColumn(textInput));
+                  //czyscic setTextInput ?
+                  // dorzucac wyjscie na Esc?
+                }
               }}
             />
           )}
@@ -86,6 +98,7 @@ export const ColumnContainer = ({ column, rows }: { column: ColumnsSlice; rows: 
             onClick={() => {
               dispatch(removeRowsInRemovedColumn(column.id));
               dispatch(removeOneColumn(column.id));
+              setTextInput([]);
             }}
           >
             delete

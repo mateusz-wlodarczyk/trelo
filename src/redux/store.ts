@@ -8,7 +8,7 @@ const reducer = combineReducers({
   columns: columnsReducer,
   rows: rowsReducer,
 });
-
+//active pozniej
 const persistConfig = {
   key: 'columnsAndRows',
   storage,

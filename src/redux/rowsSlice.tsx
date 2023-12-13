@@ -1,8 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const magicNumber_0 = 0;
-const magicNumber_1 = 1;
-const magicNumber_10 = 1;
+const idPayload = 0;
+const contentPaylod = 1;
+export const startIdRows = 10000;
 
 export interface RowsSlice {
   columnId: number;
@@ -28,7 +28,7 @@ export const rowsSlice = createSlice({
     createNewRow: (state, action) => {
       return [
         ...state,
-        { columnId: action.payload, content: 'test', id: state.length + magicNumber_10 },
+        { columnId: action.payload, content: 'test', id: state.length + startIdRows },
       ];
     },
     removeRowsInRemovedColumn: (state, action) => {
@@ -45,10 +45,10 @@ export const rowsSlice = createSlice({
     },
     updateSingleRow: (state, action) => {
       const newArray = state.map((row) => {
-        if (row.id !== action.payload[magicNumber_0]) {
+        if (row.id !== action.payload[idPayload]) {
           return row;
         } else {
-          return { ...row, title: action.payload[magicNumber_1] };
+          return { ...row, content: action.payload[contentPaylod] };
         }
       });
 

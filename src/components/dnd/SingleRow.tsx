@@ -6,8 +6,11 @@ import { CSS } from '@dnd-kit/utilities';
 import { removeSingleRow, RowsSlice, updateSingleRow } from '../../redux/rowsSlice';
 
 export const SingleRow = ({ row }: { row: RowsSlice }) => {
+  const idIndexInTextInput = 0;
+  const valueIndexinTextInput = 1;
+  type ArrayInput = string | number;
   const dispatch = useDispatch();
-
+  const [textInput, setTextInput] = useState<ArrayInput[]>([idIndexInTextInput, row.content]);
   const [editRowMode, setEditRowMode] = useState(false);
   const { attributes, isDragging, listeners, setNodeRef, transform, transition } = useSortable({
     data: { row, type: 'Row' },
@@ -25,7 +28,7 @@ export const SingleRow = ({ row }: { row: RowsSlice }) => {
           opacity: '30%',
           transform: CSS.Transform.toString(transform),
           transition,
-          width: '100px',
+          width: '180px',
         }}
       />
     );
@@ -42,52 +45,59 @@ export const SingleRow = ({ row }: { row: RowsSlice }) => {
           height: '75px',
           transform: CSS.Transform.toString(transform),
           transition,
-          width: '100px',
+          width: '180px',
         }}
       >
-        <input
+        <textarea
           key={row.id}
-          placeholder={row.content}
-          value={row.content}
+          value={textInput[valueIndexinTextInput]}
+          //poprawic onBlur
           onBlur={() => setEditRowMode((show) => !show)}
-          onChange={(e) => dispatch(updateSingleRow([row.id, e.target.value]))}
+          onChange={(e) => setTextInput([row.id, e.target.value])}
           onKeyDown={(e) => {
-            if (e.key === 'Enter') setEditRowMode(false);
+            if (e.key === 'Enter') {
+              setEditRowMode((show) => !show);
+              dispatch(updateSingleRow(textInput));
+              setTextInput([]);
+              //czyscic setTextInput ?
+              // dorzucac wyjscie na Esc?
+            }
           }}
         />
       </div>
     );
   }
   return (
-    <div
-      key={row.id}
-      ref={setNodeRef}
-      role='button'
-      tabIndex='-1'
-      {...listeners}
-      {...attributes}
-      style={{
-        borderStyle: 'solid',
-        cursor: 'grab',
-        height: '75px',
-        transform: CSS.Transform.toString(transform),
-        transition,
-        width: '100px',
-      }}
-      onClick={() => setEditRowMode((show) => !show)}
-    >
-      <div>
-        {!editRowMode && row.content}
-        {!editRowMode && (
-          <button
-            onClick={() => {
-              dispatch(removeSingleRow(row.id));
-            }}
-          >
-            delete
-          </button>
-        )}
+    <>
+      {/*  eslint-disable-next-line */}
+      <div
+        key={row.id}
+        ref={setNodeRef}
+        {...listeners}
+        {...attributes}
+        style={{
+          borderStyle: 'solid',
+          cursor: 'grab',
+          height: '75px',
+          transform: CSS.Transform.toString(transform),
+          transition,
+          width: '180px',
+        }}
+        onClick={() => setEditRowMode((show) => !show)}
+      >
+        <div>
+          {!editRowMode && row.content}
+          {!editRowMode && (
+            <button
+              onClick={() => {
+                dispatch(removeSingleRow(row.id));
+              }}
+            >
+              delete
+            </button>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
