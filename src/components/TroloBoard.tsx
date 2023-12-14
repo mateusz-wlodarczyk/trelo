@@ -12,7 +12,7 @@ import {
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
-import { arrayMove, SortableContext } from '@dnd-kit/sortable';
+import { SortableContext } from '@dnd-kit/sortable';
 
 import { ColumnsSlice, createNewColumn, updateColumnState } from '../redux/columnsSlice';
 import { RowsSlice, updateRowState } from '../redux/rowsSlice';
@@ -20,19 +20,22 @@ import { RootState } from '../redux/store';
 
 import { ColumnContainer } from './dnd/ColumnContainer';
 import { SingleRow } from './dnd/SingleRow';
+import { getNewColumns, getNewRows, getNewRowsOverColumns, SENSOR_VALUE } from './dnd/utils';
 
 export const TroloBoard = () => {
   const dispatch = useDispatch();
 
   const columns = useSelector((state: RootState) => state.columns);
   const rows = useSelector((state: RootState) => state.rows);
-  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 10 } }));
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: SENSOR_VALUE } }),
+  );
 
   const [activeColumn, setActiveColumn] = useState<ColumnsSlice | null>(null);
   const [activeRow, setActiveRow] = useState<RowsSlice | null>(null);
 
   const columnsId = useMemo(() => columns.map((column) => column.id), [columns]);
-  const numberOverRowIndex = 1;
+
   const onDragStart = (event: DragStartEvent) => {
     setActiveColumn(null);
     setActiveRow(null);
@@ -59,14 +62,7 @@ export const TroloBoard = () => {
 
     if (activeId === overId) return;
 
-    const getNewColumns = (columns: ColumnsSlice[]) => {
-      const activeColumnIndex = columns.findIndex((column) => column.id === activeId);
-      const overColumnIndex = columns.findIndex((column) => column.id === overId);
-
-      return arrayMove(columns, activeColumnIndex, overColumnIndex);
-    };
-
-    const newColumnsItems = getNewColumns(columns);
+    const newColumnsItems = getNewColumns(columns, activeId, overId);
     dispatch(updateColumnState(newColumnsItems));
   };
 
@@ -85,50 +81,14 @@ export const TroloBoard = () => {
     if (!isActiveRow) return;
 
     if (isActiveRow && isOverRow) {
-      const getNewRows = (rows: RowsSlice[]) => {
-        const activeIndex = rows.findIndex((row) => row.id === activeId);
-        const overIndex = rows.findIndex((row) => row.id === overId);
-        const rowWithActiveIndex = rows[activeIndex];
-        const rowWithOverIndex = rows[overIndex];
-
-        if (rowWithActiveIndex.columnId != rowWithOverIndex.columnId) {
-          const newArray = rows.map((row) => {
-            if (row.id === rowWithActiveIndex.id) {
-              return { ...row, columnId: rowWithOverIndex.columnId };
-            } else {
-              return row;
-            }
-          });
-
-          return arrayMove(newArray, activeIndex, overIndex - numberOverRowIndex);
-        } else {
-          return arrayMove(rows, activeIndex, overIndex);
-        }
-      };
-
-      const newRowsItems = getNewRows(rows);
-
+      const newRowsItems = getNewRows(rows, activeId, overId);
       dispatch(updateRowState(newRowsItems));
     }
 
     const isOverColumn = over.data.current?.type === 'Column';
 
     if (isActiveRow && isOverColumn) {
-      const getNewRowsOverColumns = (rows: RowsSlice[]) => {
-        const activeIndex = rows.findIndex((row) => row.id === activeId);
-        const activeRow = rows[activeIndex];
-
-        const newArray = rows.map((row) => {
-          if (row.id === activeRow.id) {
-            return { ...row, columnId: overId };
-          } else {
-            return row;
-          }
-        });
-
-        return arrayMove(newArray, activeIndex, activeIndex);
-      };
-      const newRowsItems = getNewRowsOverColumns(rows);
+      const newRowsItems = getNewRowsOverColumns(rows, activeId, overId);
       dispatch(updateRowState(newRowsItems));
     }
   };
@@ -153,6 +113,7 @@ export const TroloBoard = () => {
             </SortableContext>
           </div>
           <>
+            {/* //ogarnac test_column */}
             <button style={{ border: 2 }} onClick={() => dispatch(createNewColumn('test_column'))}>
               + add column
             </button>

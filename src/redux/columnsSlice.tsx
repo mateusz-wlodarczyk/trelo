@@ -24,6 +24,7 @@ export const columnsSlice = createSlice({
   reducers: {
     createNewColumn: (state, action) => {
       //wrzucic limit na liczbe kolumn (teoria)
+      //create title: action.payload
       return [...state, { id: state.length + startIdColumns, title: action.payload }];
     },
     removeOneColumn: (state, action) => {

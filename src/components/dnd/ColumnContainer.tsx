@@ -6,14 +6,15 @@ import { CSS } from '@dnd-kit/utilities';
 import { ColumnsSlice, removeOneColumn, updateTitleColumn } from '../../redux/columnsSlice';
 import { createNewRow, removeRowsInRemovedColumn, RowsSlice } from '../../redux/rowsSlice';
 
+const ID_INDEX_IN_TEXT_INPUT = 0;
+const VALUE_INDEX_IN_TEXT_INPUT = 1;
+type ArrayInput = string | number;
+
 import { SingleRow } from './SingleRow';
 export const ColumnContainer = ({ column, rows }: { column: ColumnsSlice; rows: RowsSlice[] }) => {
-  const idIndexInTextInput = 0;
-  const valueIndexinTextInput = 1;
-  type ArrayInput = string | number;
-  const [textInput, setTextInput] = useState<ArrayInput[]>([idIndexInTextInput, column.title]);
-  const dispatch = useDispatch();
+  const [textInput, setTextInput] = useState<ArrayInput[]>([ID_INDEX_IN_TEXT_INPUT, column.title]);
   const [editTitleMode, setEditTitleMode] = useState(false);
+  const dispatch = useDispatch();
   const { attributes, isDragging, listeners, setNodeRef, transform, transition } = useSortable({
     data: { column, type: 'Column' },
     disabled: editTitleMode,
@@ -22,6 +23,20 @@ export const ColumnContainer = ({ column, rows }: { column: ColumnsSlice; rows: 
 
   const rowsId = useMemo(() => rows.map((row) => row.id), [rows]);
 
+  const handleOnKey = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter') {
+      setEditTitleMode((show) => !show);
+      dispatch(updateTitleColumn(textInput));
+    }
+
+    if (e.key === 'Escape') {
+      setEditTitleMode((show) => !show);
+    }
+  };
+
+  const handleOnChange = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    setTextInput([column.id, e.target.value]);
+  };
   if (isDragging) {
     return (
       <div
@@ -76,20 +91,12 @@ export const ColumnContainer = ({ column, rows }: { column: ColumnsSlice; rows: 
           {!editTitleMode && column.title}
           {editTitleMode && (
             <textarea
-              value={textInput[valueIndexinTextInput]}
-              //poprawic onBlur
+              value={textInput[VALUE_INDEX_IN_TEXT_INPUT]}
               onBlur={() => setEditTitleMode((show) => !show)}
-              onChange={(e) => {
-                setTextInput([column.id, e.target.value]);
-              }}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  setEditTitleMode((show) => !show);
-                  dispatch(updateTitleColumn(textInput));
-                  //czyscic setTextInput ?
-                  // dorzucac wyjscie na Esc?
-                }
-              }}
+              onChange={handleOnChange}
+              onKeyDown={handleOnKey}
+
+              //poprawic onBlur
             />
           )}
         </div>

@@ -5,18 +5,33 @@ import { CSS } from '@dnd-kit/utilities';
 
 import { removeSingleRow, RowsSlice, updateSingleRow } from '../../redux/rowsSlice';
 
+const ID_INDEX_IN_TEXT_INPUT = 0;
+const VALUE_INDEX_IN_TEXT_INPUT = 1;
+type ArrayInput = string | number;
+
 export const SingleRow = ({ row }: { row: RowsSlice }) => {
-  const idIndexInTextInput = 0;
-  const valueIndexinTextInput = 1;
-  type ArrayInput = string | number;
   const dispatch = useDispatch();
-  const [textInput, setTextInput] = useState<ArrayInput[]>([idIndexInTextInput, row.content]);
+  const [textInput, setTextInput] = useState<ArrayInput[]>([ID_INDEX_IN_TEXT_INPUT, row.content]);
   const [editRowMode, setEditRowMode] = useState(false);
   const { attributes, isDragging, listeners, setNodeRef, transform, transition } = useSortable({
     data: { row, type: 'Row' },
     disabled: editRowMode,
     id: row.id,
   });
+
+  const handleOnKey = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter') {
+      setEditRowMode((show) => !show);
+      dispatch(updateSingleRow(textInput));
+    }
+    if (e.key === 'Escape') {
+      setEditRowMode((show) => !show);
+    }
+  };
+
+  const handleOnChange = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    setTextInput([row.id, e.target.value]);
+  };
 
   if (isDragging) {
     return (
@@ -50,19 +65,11 @@ export const SingleRow = ({ row }: { row: RowsSlice }) => {
       >
         <textarea
           key={row.id}
-          value={textInput[valueIndexinTextInput]}
+          value={textInput[VALUE_INDEX_IN_TEXT_INPUT]}
           //poprawic onBlur
           onBlur={() => setEditRowMode((show) => !show)}
-          onChange={(e) => setTextInput([row.id, e.target.value])}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              setEditRowMode((show) => !show);
-              dispatch(updateSingleRow(textInput));
-              setTextInput([]);
-              //czyscic setTextInput ?
-              // dorzucac wyjscie na Esc?
-            }
-          }}
+          onChange={handleOnChange}
+          onKeyDown={handleOnKey}
         />
       </div>
     );

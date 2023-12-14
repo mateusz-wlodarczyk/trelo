@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const idPayload = 0;
-const contentPaylod = 1;
+const contentPayload = 1;
 export const startIdRows = 10000;
 
 export interface RowsSlice {
@@ -26,6 +26,7 @@ export const rowsSlice = createSlice({
   name: 'rows',
   reducers: {
     createNewRow: (state, action) => {
+      //create content: action.payload
       return [
         ...state,
         { columnId: action.payload, content: 'test', id: state.length + startIdRows },
@@ -48,7 +49,7 @@ export const rowsSlice = createSlice({
         if (row.id !== action.payload[idPayload]) {
           return row;
         } else {
-          return { ...row, content: action.payload[contentPaylod] };
+          return { ...row, content: action.payload[contentPayload] };
         }
       });
 
