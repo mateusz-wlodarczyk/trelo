@@ -1,34 +1,35 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { BsThreeDots } from 'react-icons/bs';
 import { IoMdAdd } from 'react-icons/io';
 import { MdOutlineCancel } from 'react-icons/md';
 import { useDispatch } from 'react-redux';
 import { SortableContext, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Button, IconButton, Popover, TextField, ThemeProvider, Typography } from '@mui/material';
+import { Button, IconButton, Popover, TextField, Typography } from '@mui/material';
 
 import { ColumnsSlice, removeOneColumn, updateTitleColumn } from '../../redux/columnsSlice';
-import { createNewRow, RowsSlice } from '../../redux/rowsSlice';
-import { sxButton, sxTextarea, themeTextArea } from '../../utils/SXstyle';
+import { createNewRow, removeRowsInRemovedColumn, RowsSlice } from '../../redux/rowsSlice';
+import {} from '../../style/SXstyle';
+import { sxButton, sxTextarea } from '../../style/SXstyle';
+import {
+  ACTIVE_LENGTH,
+  ACTIVE_LENGTH_INDEX,
+  ID_INDEX_IN_TEXT_INPUT,
+  VALUE_INDEX_IN_TEXT_INPUT,
+} from '../../utils/constans';
 import { PopoverCustom } from '../PopoverCustom';
 
 import { SingleRow } from './SingleRow';
 
-import '../../utils/style.css';
+import '../../style/style.css';
 
-const ACTIVE_LENGTH = 1;
-const ACTIVE_LENGTH_INDEX = 1;
-const ID_INDEX_IN_TEXT_INPUT = 0;
-const VALUE_INDEX_IN_TEXT_INPUT = 1;
-const REF_INPUT = 10;
-type ArrayInput = string | number;
+type InputField = string | number;
 
 export const ColumnContainer = ({ column, rows }: { column: ColumnsSlice; rows: RowsSlice[] }) => {
-  const ref = useRef<HTMLTextAreaElement>(null);
   const dispatch = useDispatch();
 
-  const [textInput, setTextInput] = useState<ArrayInput[]>([ID_INDEX_IN_TEXT_INPUT, column.title]);
-  const [newTask, setNewTask] = useState<ArrayInput[]>([ID_INDEX_IN_TEXT_INPUT, '']);
+  const [textInput, setTextInput] = useState<InputField[]>([ID_INDEX_IN_TEXT_INPUT, column.title]);
+  const [newTask, setNewTask] = useState<InputField[]>([ID_INDEX_IN_TEXT_INPUT, '']);
 
   const [textInputMode, setTextInputMode] = useState(false);
   const [addNewTaskMode, setAddNewTaskMode] = useState(false);
@@ -51,8 +52,8 @@ export const ColumnContainer = ({ column, rows }: { column: ColumnsSlice; rows: 
     setAnchorEl(null);
   };
 
-  const open = Boolean(anchorEl);
-  const id = open ? 'simple-popover' : undefined;
+  const isOpen = Boolean(anchorEl);
+  const id = isOpen ? 'simple-popover' : undefined;
 
   const handleOnKey = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter') {
@@ -62,6 +63,17 @@ export const ColumnContainer = ({ column, rows }: { column: ColumnsSlice; rows: 
 
     if (e.key === 'Escape') {
       setTextInputMode((show) => !show);
+    }
+  };
+
+  const handleRowIconAction = () => {
+    if (newTask[ACTIVE_LENGTH_INDEX].length > ACTIVE_LENGTH) {
+      dispatch(createNewRow(newTask));
+      setAddNewTaskMode((show) => !show);
+      setNewTask([ID_INDEX_IN_TEXT_INPUT, '']);
+    } else {
+      setAddNewTaskMode((show) => !show);
+      setNewTask([ID_INDEX_IN_TEXT_INPUT, '']);
     }
   };
 
@@ -90,22 +102,19 @@ export const ColumnContainer = ({ column, rows }: { column: ColumnsSlice; rows: 
             {!textInputMode && <p className='column-textarea'>{column.title}</p>}
 
             {textInputMode && (
-              <ThemeProvider theme={themeTextArea}>
-                <TextField
-                  autoFocus
-                  multiline
-                  required
-                  minRows={1}
-                  sx={sxTextarea}
-                  value={textInput[VALUE_INDEX_IN_TEXT_INPUT]}
-                  // onInput={handleInput}
-
-                  onKeyDown={handleOnKey}
-                  onBlur={() => setTextInputMode((show) => !show)}
-                  //poprawic onBlur
-                  onChange={handleOnChange}
-                />
-              </ThemeProvider>
+              <TextField
+                autoFocus
+                multiline
+                required
+                minRows={1}
+                sx={sxTextarea}
+                value={textInput[VALUE_INDEX_IN_TEXT_INPUT]}
+                onKeyDown={handleOnKey}
+                // onInput={handleInput}
+                onChange={handleOnChange}
+                //poprawic onBlur
+                onBlur={() => setTextInputMode((show) => !show)}
+              />
             )}
           </div>
           <div>
@@ -116,7 +125,7 @@ export const ColumnContainer = ({ column, rows }: { column: ColumnsSlice; rows: 
                 </IconButton>
                 <Popover
                   anchorEl={anchorEl}
-                  open={open}
+                  open={isOpen}
                   anchorOrigin={{
                     horizontal: 'left',
                     vertical: 'bottom',
@@ -124,7 +133,12 @@ export const ColumnContainer = ({ column, rows }: { column: ColumnsSlice; rows: 
                   onClose={handleClosePopover}
                 >
                   <Typography sx={{ p: 2 }}>
-                    <PopoverCustom clickDelete={() => dispatch(removeOneColumn(column.id))} />
+                    <PopoverCustom
+                      clickDelete={() => {
+                        dispatch(removeOneColumn(column.id));
+                        dispatch(removeRowsInRemovedColumn(column.id));
+                      }}
+                    />
                   </Typography>
                 </Popover>
               </>
@@ -153,29 +167,15 @@ export const ColumnContainer = ({ column, rows }: { column: ColumnsSlice; rows: 
         )}
         {addNewTaskMode && (
           <div className='column-btn-newRow'>
-            {/* walidacja */}
-            <ThemeProvider theme={themeTextArea}>
-              <TextField
-                multiline
-                required
-                minRows={1}
-                sx={sxTextarea}
-                onChange={handleOnChangeRow}
-              />{' '}
-            </ThemeProvider>
+            <TextField
+              multiline
+              required
+              minRows={1}
+              sx={sxTextarea}
+              onChange={handleOnChangeRow}
+            />{' '}
             <div>
-              <Button
-                onClick={() => {
-                  if (newTask[ACTIVE_LENGTH_INDEX].length > ACTIVE_LENGTH) {
-                    dispatch(createNewRow(newTask));
-                    setAddNewTaskMode((show) => !show);
-                    setNewTask([ID_INDEX_IN_TEXT_INPUT, '']);
-                  } else {
-                    setAddNewTaskMode((show) => !show);
-                    setNewTask([ID_INDEX_IN_TEXT_INPUT, '']);
-                  }
-                }}
-              >
+              <Button onClick={handleRowIconAction}>
                 <IoMdAdd className='row-icons' />
               </Button>
               <Button

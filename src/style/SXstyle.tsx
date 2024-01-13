@@ -33,10 +33,16 @@ export const themeTextArea = createTheme({
         input: {
           backgroundColor: 'gray',
           borderRadius: '5px',
+          focused: {
+            borderColor: 'red',
+          },
         },
-        root: {
-          backgroundColor: 'gray',
 
+        root: {
+          '&.Mui-focused': {
+            backgroundColor: 'yellow',
+          },
+          backgroundColor: 'gray',
           margin: '0px',
           padding: '0px',
         },

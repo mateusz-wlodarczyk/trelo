@@ -35,6 +35,9 @@ export const rowsSlice = createSlice({
         },
       ];
     },
+    removeAllRow: () => {
+      return [];
+    },
     removeRowsInRemovedColumn: (state, action) => {
       const newArray = state.filter((row) => row.columnId !== action.payload);
       return newArray;
@@ -65,6 +68,7 @@ export const rowsSlice = createSlice({
 
 export const {
   createNewRow,
+  removeAllRow,
   removeRowsInRemovedColumn,
   removeSingleRow,
   updateRowState,

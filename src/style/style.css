@@ -195,3 +195,13 @@ body {
   opacity: 30%;
   width: 95%;
 }
+
+/*  */
+
+.auth {
+  width: var(--width-row);
+}
+
+.warnings {
+  color: red;
+}

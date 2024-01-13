@@ -3,13 +3,12 @@ import { MdOutlineDeleteOutline } from 'react-icons/md';
 import { useDispatch } from 'react-redux';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { IconButton, TextField, ThemeProvider } from '@mui/material';
+import { IconButton, TextField } from '@mui/material';
 
 import { removeSingleRow, RowsSlice, updateSingleRow } from '../../redux/rowsSlice';
-import { sxTextarea, themeTextArea } from '../../utils/SXstyle';
+import { sxTextarea } from '../../style/SXstyle';
+import { ID_INDEX_IN_TEXT_INPUT, VALUE_INDEX_IN_TEXT_INPUT } from '../../utils/constans';
 
-const ID_INDEX_IN_TEXT_INPUT = 0;
-const VALUE_INDEX_IN_TEXT_INPUT = 1;
 type ArrayInput = string | number;
 
 export const SingleRow = ({ row }: { row: RowsSlice }) => {
@@ -21,7 +20,10 @@ export const SingleRow = ({ row }: { row: RowsSlice }) => {
     disabled: editRowMode,
     id: row.id,
   });
-
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
   const handleOnKey = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter') {
       setEditRowMode((show) => !show);
@@ -35,10 +37,7 @@ export const SingleRow = ({ row }: { row: RowsSlice }) => {
   const handleOnChange = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     setTextInput([row.id, e.target.value]);
   };
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
+
   if (isDragging) {
     return <div className='row-dragging' ref={setNodeRef} style={style} />;
   }
@@ -46,20 +45,18 @@ export const SingleRow = ({ row }: { row: RowsSlice }) => {
   if (editRowMode) {
     return (
       <div className='row-single' ref={setNodeRef} {...listeners} {...attributes} style={style}>
-        <ThemeProvider theme={themeTextArea}>
-          <TextField
-            key={row.id}
-            multiline
-            required
-            minRows={1}
-            sx={sxTextarea}
-            value={textInput[VALUE_INDEX_IN_TEXT_INPUT]}
-            onBlur={() => setEditRowMode((show) => !show)}
-            onChange={handleOnChange}
-            //poprawic onBlur
-            onKeyDown={handleOnKey}
-          />
-        </ThemeProvider>
+        <TextField
+          key={row.id}
+          multiline
+          required
+          minRows={1}
+          sx={sxTextarea}
+          value={textInput[VALUE_INDEX_IN_TEXT_INPUT]}
+          onBlur={() => setEditRowMode((show) => !show)}
+          onChange={handleOnChange}
+          //poprawic onBlur
+          onKeyDown={handleOnKey}
+        />
       </div>
     );
   }
@@ -88,7 +85,7 @@ export const SingleRow = ({ row }: { row: RowsSlice }) => {
               >
                 <MdOutlineDeleteOutline
                   className='row-icons'
-                  style={{ padding: '0px', color: 'white', margin: '0px' }}
+                  style={{ color: 'white', margin: '0px', padding: '0px' }}
                 />
               </IconButton>
             </div>

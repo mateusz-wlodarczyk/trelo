@@ -2,10 +2,11 @@ import React from 'react';
 import { MdOutlineDeleteOutline } from 'react-icons/md';
 import { IconButton } from '@mui/material';
 
+// blad clickDelete
 export const PopoverCustom = ({ clickDelete }) => {
   return (
     <div>
-      <div style={{ margin: '0px', padding: '0px' }}>
+      <div>
         <IconButton sx={{ margin: '2px', padding: '2px' }} onClick={() => clickDelete()}>
           delete
           <MdOutlineDeleteOutline

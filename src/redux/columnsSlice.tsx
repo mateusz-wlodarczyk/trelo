@@ -26,10 +26,14 @@ export const columnsSlice = createSlice({
       //wrzucic limit na liczbe kolumn (teoria)
       return [...state, { id: state.length + startIdColumns, title: action.payload }];
     },
+    removeAllColumn: () => {
+      return [];
+    },
     removeOneColumn: (state, action) => {
       const newArray = state.filter((column) => column.id !== action.payload);
       return newArray;
     },
+
     updateColumnState: (_, action) => {
       return action.payload;
     },
@@ -49,7 +53,12 @@ export const columnsSlice = createSlice({
   },
 });
 
-export const { createNewColumn, removeOneColumn, updateColumnState, updateTitleColumn } =
-  columnsSlice.actions;
+export const {
+  createNewColumn,
+  removeAllColumn,
+  removeOneColumn,
+  updateColumnState,
+  updateTitleColumn,
+} = columnsSlice.actions;
 
 export default columnsSlice.reducer;
