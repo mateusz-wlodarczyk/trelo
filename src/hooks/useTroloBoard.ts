@@ -107,7 +107,7 @@ export const useTroloBoard = () => {
   };
   // value blad?
   const handleOnChangeNewColumn = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    setAddNewColumn(e.target.value);
+    setAddNewColumn(e.currentTarget.value);
   };
   const handleClumnNewClick = () => setAddNewColumnMode((show) => !show);
 

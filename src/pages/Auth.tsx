@@ -1,30 +1,17 @@
-import { useState } from 'react';
-import { Button } from '@mui/material';
+import { Link } from 'react-router-dom';
 
-import { Login } from '../components/Login';
-import { Register } from '../components/Register';
+import { ROUTES } from '../utils/constans';
 
 export const Auth = () => {
-  const [hasAccount, setHasAccount] = useState(true);
   return (
     <>
-      {hasAccount && (
-        <>
-          <Login />
-          <div>
-            no account? <Button onClick={() => setHasAccount((show) => !show)}>register</Button>
-          </div>
-        </>
-      )}
+      <div>
+        no account? <Link to={ROUTES.register}>register</Link>
+      </div>
 
-      {!hasAccount && (
-        <>
-          <Register />
-          <div>
-            has account? <Button onClick={() => setHasAccount((show) => !show)}>login</Button>
-          </div>
-        </>
-      )}
+      <div>
+        has account? <Link to={ROUTES.login}>login</Link>
+      </div>
     </>
   );
 };

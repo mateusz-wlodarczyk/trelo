@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 import { useAuthContext } from '../context/contextSupabase';
+import { ROUTES } from '../utils/constans';
 
 export const ProtectedWrapper = ({ children }: { children: React.ReactNode }) => {
   const { isLogin } = useAuthContext();
@@ -9,7 +10,7 @@ export const ProtectedWrapper = ({ children }: { children: React.ReactNode }) =>
   return (
     <>
       <p>unauthorized access</p>
-      please<Link to='/'>login/register</Link>
+      please<Link to={ROUTES.auth}>login/register</Link>
     </>
   );
 };

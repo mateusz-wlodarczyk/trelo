@@ -21,8 +21,6 @@ import { PopoverCustom } from '../PopoverCustom';
 
 import { SingleRow } from './SingleRow';
 
-import '../../style/style.css';
-
 type InputField = string | number;
 
 export const ColumnContainer = ({ column, rows }: { column: ColumnsSlice; rows: RowsSlice[] }) => {
@@ -110,9 +108,9 @@ export const ColumnContainer = ({ column, rows }: { column: ColumnsSlice; rows: 
                 sx={sxTextarea}
                 value={textInput[VALUE_INDEX_IN_TEXT_INPUT]}
                 onKeyDown={handleOnKey}
-                // onInput={handleInput}
-                onChange={handleOnChange}
                 //poprawic onBlur
+                onChange={handleOnChange}
+                // onInput={handleInput}
                 onBlur={() => setTextInputMode((show) => !show)}
               />
             )}

@@ -4,16 +4,17 @@ import { IoMdAdd } from 'react-icons/io';
 import { MdOutlineCancel } from 'react-icons/md';
 import { DndContext, DragOverlay } from '@dnd-kit/core';
 import { SortableContext } from '@dnd-kit/sortable';
-import { Button, TextField, ThemeProvider } from '@mui/material';
+import { Button, TextField } from '@mui/material';
 
 import { useAuthContext } from '../context/contextSupabase';
 import { useTroloBoard } from '../hooks/useTroloBoard';
 import { ColumnsSlice } from '../redux/columnsSlice';
-import { sxButton, sxTextarea, themeTextArea } from '../style/SXstyle';
+import { sxButton, sxTextarea } from '../style/SXstyle';
 import { saveLocalStorage } from '../utils/supabase';
 
 import { ColumnContainer } from './dnd/ColumnContainer';
 import { SingleRow } from './dnd/SingleRow';
+import { Nav } from './Nav';
 
 export const TroloBoard = () => {
   const {
@@ -36,16 +37,19 @@ export const TroloBoard = () => {
   const { loggedUser, logoutUser } = useAuthContext();
   // otypowac loggedUser
   const handleSaveLocalStorage = () => {
+    // console.log(loggedUser.user.id);
     saveLocalStorage(loggedUser.user.id);
   };
-
+  const handleLogoutUser = () => {
+    logoutUser();
+  };
   return (
     <>
-      <div>
-        <Button onClick={() => logoutUser()}>logout</Button>
-        <Button onClick={handleClearAll}>clear</Button>
-        <Button onClick={handleSaveLocalStorage}>save</Button>
-      </div>
+      <Nav
+        handleClearAll={handleClearAll}
+        handleLogoutUser={handleLogoutUser}
+        handleSaveLocalStorage={handleSaveLocalStorage}
+      />
       <DndContext
         sensors={sensors}
         onDragEnd={onDragEnd}
@@ -73,16 +77,16 @@ export const TroloBoard = () => {
               )}
               {addNewColumnMode && (
                 <div>
-                  <ThemeProvider theme={themeTextArea}>
-                    <TextField
-                      multiline
-                      required
-                      className=''
-                      minRows={1}
-                      sx={sxTextarea}
-                      onChange={handleOnChangeNewColumn}
-                    />
-                  </ThemeProvider>
+                  {/* <ThemeProvider theme={themeTextArea}> */}
+                  <TextField
+                    multiline
+                    required
+                    className=''
+                    minRows={1}
+                    sx={sxTextarea}
+                    onChange={handleOnChangeNewColumn}
+                  />
+                  {/* </ThemeProvider> */}
                   <div className=''>
                     <Button onClick={handleCreateNewColumn}>
                       <IoMdAdd className='row-icons' />

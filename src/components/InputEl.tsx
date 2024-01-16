@@ -2,8 +2,15 @@ import React from 'react';
 import { TextField } from '@mui/material';
 import { FormikProps } from 'formik';
 
-//jak to otypowac?<T extends Record<string, string | number>>
-export const InputEl = ({ accessor, formik }: { accessor: string; formik: FormikProps<T> }) => {
+import { FormValues, FormValuesLogin } from '../utils/yupSchema';
+
+export const InputEl = ({
+  accessor,
+  formik,
+}: {
+  accessor: keyof FormValues | keyof FormValuesLogin;
+  formik: FormikProps<FormValues>;
+}) => {
   return (
     <div>
       <TextField

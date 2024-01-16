@@ -33,9 +33,6 @@ export const themeTextArea = createTheme({
         input: {
           backgroundColor: 'gray',
           borderRadius: '5px',
-          focused: {
-            borderColor: 'red',
-          },
         },
 
         root: {

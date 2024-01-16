@@ -2,8 +2,7 @@ import React from 'react';
 import { MdOutlineDeleteOutline } from 'react-icons/md';
 import { IconButton } from '@mui/material';
 
-// blad clickDelete
-export const PopoverCustom = ({ clickDelete }) => {
+export const PopoverCustom = ({ clickDelete }: { clickDelete: () => void }) => {
   return (
     <div>
       <div>

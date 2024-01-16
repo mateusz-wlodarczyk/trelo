@@ -1,8 +1,10 @@
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@mui/material';
 import { useFormik } from 'formik';
 
+import { InputEl } from '../components/InputEl';
 import { useAuthContext } from '../context/contextSupabase';
+import { ROUTES } from '../utils/constans';
 import {
   FormValues,
   initialValuesFormik,
@@ -10,18 +12,16 @@ import {
   yupSchemaLogin,
 } from '../utils/yupSchema';
 
-import { InputEl } from './InputEl';
-
 export const Register = () => {
   const navigate = useNavigate();
-  const { errorRegister } = useAuthContext();
-  const { registerNewUser } = useAuthContext();
+
+  const { errorRegister, registerNewUser } = useAuthContext();
   const formik = useFormik<FormValues>({
     enableReinitialize: true,
     initialValues: initialValuesFormik,
     onSubmit: () => {
       registerNewUser(formik.values);
-      if (errorRegister) navigate('/info');
+      if (errorRegister) navigate(`${ROUTES.info}`);
     },
     validationSchema: yupSchemaLogin,
   });
@@ -41,6 +41,7 @@ export const Register = () => {
       {errorRegister && (
         <p className='warnings'>please use the right email, name or passowrd to register</p>
       )}
+      <Link to={ROUTES.login}>login</Link>
     </>
   );
 };

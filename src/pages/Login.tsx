@@ -1,17 +1,17 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@mui/material';
 import { useFormik } from 'formik';
 
+import { InputEl } from '../components/InputEl';
 import { useAuthContext } from '../context/contextSupabase';
+import { ROUTES } from '../utils/constans';
 import {
   FormValuesLogin,
   initialValuesFormikLogin,
   LoginFormValues,
   yupSchemaLogin,
 } from '../utils/yupSchema';
-
-import { InputEl } from './InputEl';
 
 export const Login = () => {
   const [wrongLog, setWrongLog] = useState(false);
@@ -26,7 +26,7 @@ export const Login = () => {
     onSubmit: () => {
       loginUser(formik.values);
       if (isLogin) {
-        navigate('/home');
+        navigate(`${ROUTES.home}`);
         setWrongLog(false);
       } else {
         setWrongLog(true);
@@ -46,6 +46,8 @@ export const Login = () => {
         </form>
       </div>
       {wrongLog && <p className='warnings'>please use the right email or passowrd to login</p>}
+
+      <Link to={ROUTES.register}>register</Link>
     </>
   );
 };
