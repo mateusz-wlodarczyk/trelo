@@ -4,6 +4,14 @@ import { FormikProps } from 'formik';
 
 import { FormValues, FormValuesLogin } from '../utils/yupSchema';
 
+// export default function InputEl<T extends Record<string, string | number>>({
+//   formik,
+//   accessor,
+// }: {
+//   formik: FormikProps<T>;
+//   accessor: string;
+// }) {
+
 export const InputEl = ({
   accessor,
   formik,

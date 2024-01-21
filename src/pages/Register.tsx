@@ -20,8 +20,10 @@ export const Register = () => {
     enableReinitialize: true,
     initialValues: initialValuesFormik,
     onSubmit: () => {
-      registerNewUser(formik.values);
-      if (errorRegister) navigate(`${ROUTES.info}`);
+      registerNewUser(formik.values).then((resp) => {
+        if (resp) navigate(`${ROUTES.info}`);
+      });
+      // if (errorRegister) navigate(`${ROUTES.info}`);
     },
     validationSchema: yupSchemaLogin,
   });

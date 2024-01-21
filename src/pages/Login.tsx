@@ -24,13 +24,13 @@ export const Login = () => {
     // dwa razy trzeba klikac w login, useState laduje sie pozniej - jak rozwiazac?
 
     onSubmit: () => {
-      loginUser(formik.values);
-      if (isLogin) {
-        navigate(`${ROUTES.home}`);
-        setWrongLog(false);
-      } else {
-        setWrongLog(true);
-      }
+      loginUser(formik.values).then((resp) => {
+        if (resp) {
+          navigate(`${ROUTES.home}`);
+          return;
+        }
+        setWrongLog(resp);
+      });
     },
     validationSchema: yupSchemaLogin,
   });

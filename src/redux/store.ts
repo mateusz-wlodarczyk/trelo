@@ -5,10 +5,12 @@ import thunk from 'redux-thunk';
 
 import columnsReducer from './columnsSlice.tsx';
 import rowsReducer from './rowsSlice.tsx';
+import zestaw4Reducer from './Zestaw4Slice.tsx';
 
 const reducer = combineReducers({
   columns: columnsReducer,
   rows: rowsReducer,
+  zestaw4: zestaw4Reducer,
 });
 
 const persistConfig = {

@@ -7,9 +7,9 @@ type AuthContextProps = {
   errorRegister: boolean;
   isLogin: boolean;
   loggedUser: unknown;
-  loginUser: (loggedUser: FormValuesLogin) => void;
+  loginUser: (loggedUser: FormValuesLogin) => Promise<boolean>;
   logoutUser: () => void;
-  registerNewUser: (newUser: FormValues) => void;
+  registerNewUser: (newUser: FormValues) => Promise<boolean>;
 };
 
 const AuthContext = createContext<AuthContextProps | null>(null);
@@ -27,11 +27,13 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       });
       if (error) {
         setErrorRegister(true);
+        return true;
       } else {
         setErrorRegister(false);
       }
     } catch (error) {
       console.log(error);
+      return false;
     }
   };
 
@@ -44,11 +46,13 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (data.user !== null) {
         setIsLogin(true);
         setLoggedUser(data);
+        return true;
       } else {
         return;
       }
     } catch (error) {
       console.log(error);
+      return false;
     }
   };
 

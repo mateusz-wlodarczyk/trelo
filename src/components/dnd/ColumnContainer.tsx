@@ -107,11 +107,11 @@ export const ColumnContainer = ({ column, rows }: { column: ColumnsSlice; rows: 
                 minRows={1}
                 sx={sxTextarea}
                 value={textInput[VALUE_INDEX_IN_TEXT_INPUT]}
-                onKeyDown={handleOnKey}
-                //poprawic onBlur
                 onChange={handleOnChange}
                 // onInput={handleInput}
                 onBlur={() => setTextInputMode((show) => !show)}
+                //poprawic onBlur
+                onKeyDown={handleOnKey}
               />
             )}
           </div>
