@@ -1,0 +1,207 @@
+/* nie dziala wszedzie */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  border-left: 1px solid var(--background-color-column);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-scroll);
+  border-radius: 5px;
+  -webkit-box-shadow: inset 0 0 4px var(--color-scroll);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-scroll);
+  -webkit-box-shadow: inset 0 0 4px var(--color-scroll);
+}
+::-webkit-scrollbar-thumb:window-inactive {
+  background: var(--color-scroll);
+}
+:root {
+  --text-color-column: #fff;
+  --background-color-column: #000;
+  --background-color-row: gray;
+  --background-color-column-dnd: gray;
+  --background-color-column-textarea: gray;
+  --border-color-column: #000;
+  --height-column: 600px;
+  --width-row: 230px;
+  --border-radius: 15px;
+  --color-text-column: #fff;
+  --color-scroll: gray;
+  --margin-column: 0px;
+  --padding-column: 2px;
+}
+* {
+  margin: 5px;
+  padding: 5px;
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  font-family: 'Montserrat', sans-serif;
+  /* width: 80%; */
+}
+
+.container {
+  border: 1px solid black;
+  /* width: 98vw; */
+  display: flex;
+  flex-direction: row;
+  overflow: scroll;
+  overflow-y: hidden;
+  background-color: pink;
+  align-items: self-start;
+}
+.column-wrapper {
+  align-items: self-start;
+  display: flex;
+  gap: 5px;
+  padding: var(--padding-column);
+  margin: var(--margin-column);
+}
+.column-container {
+  background-color: var(--background-color-column);
+  border-radius: var(--border-radius);
+  align-items: center;
+  border-style: none;
+  color: var(--color-text-column);
+  display: flex;
+  justify-content: space-between;
+  width: var(--width-row);
+  height: var(--height-column);
+  flex-direction: column;
+  /* padding: var(--padding-column);
+  margin: var(--margin-column); */
+  position: relative;
+}
+.column-dnd {
+  background-color: var(--background-color-column-dnd);
+  /* background-color: red; */
+  border-radius: var(--border-radius);
+  border: 3px solid black;
+  width: var(--width-row);
+  height: var(--height-column);
+  opacity: 60%;
+  padding: var(--padding-column);
+  margin: var(--margin-column);
+}
+.column-header {
+  width: 100%;
+  cursor: pointer;
+  padding: 5px;
+  justify-content: space-between;
+  display: flex;
+  flex-direction: row;
+  height: auto;
+  /* height: 100%; */
+  /* width: 100%; */
+  position: relative;
+}
+
+.column-textarea {
+  color: var(--color-text-column);
+  overflow: hidden;
+  overflow-wrap: break-word;
+  resize: none;
+  word-break: break-all;
+  word-wrap: break-word;
+  width: 100%;
+}
+
+.column-btn-header {
+  margin: 0px;
+  position: absolute;
+  right: 0px;
+  bottom: 0px;
+  width: 20px;
+  padding: 2px;
+  color: white;
+}
+
+.column-btn-newRow {
+  display: flex;
+  color: var(--color-text-column);
+  min-height: 50px;
+
+  border-style: 1px solid pink;
+  width: 100%;
+}
+.column-btn-newRow-icons {
+  display: flex;
+  flex-direction: column;
+  color: var(--color-text-column);
+}
+.rows-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 2px;
+  overflow: scroll;
+  overflow-x: hidden;
+  padding: 1px;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.row-icons {
+  color: var(--color-text-column);
+  padding: 0;
+  margin: 0;
+}
+
+.column-new {
+  width: var(--width-row);
+  background-color: var(--background-color-column-textarea);
+  background-color: var(--background-color-column);
+  border-radius: var(--border-radius);
+  align-items: center;
+  border-style: none;
+  color: var(--color-text-column);
+  display: flex;
+  justify-content: space-between;
+
+  flex-direction: column;
+  padding: var(--padding-column);
+  margin: var(--margin-column);
+}
+/* rows */
+
+.row-btn-container {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+/* dynamic height */
+.row-single {
+  background-color: var(--background-color-row);
+  border: none;
+  padding: 5px;
+  border-radius: var(--border-radius);
+  min-height: 30px;
+  width: 95%;
+  cursor: pointer;
+}
+
+.row-dragging {
+  border-radius: var(--border-radius);
+  border-style: solid;
+  min-height: 30px;
+  opacity: 30%;
+  width: 95%;
+}
+
+/*  */
+
+.auth {
+  width: var(--width-row);
+}
+
+.warnings {
+  color: red;
+}
